@@ -15,10 +15,11 @@ class dr20:
         A controller for the DR20 Robot
     """
 
-    def __init__(self, sim, nameString):
+    def __init__(self, sim, nameString, threadID):
         self.sim = sim
         self.floor = sim.getObject(FLOOR)
         self.robot = sim.getObject(nameString)
+        self.ID = threadID
         self.leftWheel = sim.getObject(nameString + LEFT_WHEEL_JOINT)
         self.rightWheel = sim.getObject(nameString + RIGHT_WHEEL_JOINT)
         self.ultrasonicSensor = sim.getObject(nameString + ULTRASONIC_SENSOR)
@@ -53,6 +54,7 @@ class dr20:
         if (currentAngle < newAngle and (newAngle - currentAngle) <= 180) or (
                 currentAngle > newAngle and currentAngle - newAngle > 180):
             while self.getCurrentAngle() != newAngle:
+                print(f"Robot {str(self.ID)} adjusting")
                 print(f"{newAngle} -> {self.getCurrentAngle()}")
                 self.sim.setJointTargetVelocity(self.leftWheel, -velocity)
                 self.sim.setJointTargetVelocity(self.rightWheel, velocity)
@@ -60,6 +62,7 @@ class dr20:
 
         else:
             while self.getCurrentAngle() != newAngle:
+                print(f"Robot {str(self.ID)} adjusting")
                 print(f"{newAngle} -> {self.getCurrentAngle()}")
                 self.sim.setJointTargetVelocity(self.leftWheel, velocity)
                 self.sim.setJointTargetVelocity(self.rightWheel, -velocity)
@@ -68,6 +71,7 @@ class dr20:
     def readUltrasonicSensor(self):
         excludedObjects = ["Floor", "visibleElement", "element"]
         reading = self.sim.readProximitySensor(self.ultrasonicSensor)
+        print(f"Robot {str(self.ID)} reading.")
         print(reading)
 
         if reading != 0 and reading[1] < 0.75:
@@ -94,6 +98,7 @@ class dr20:
             return -value
 
     def randomlyExploreForSetTime(self, timeLimit=1200):
+        # Basically takes the while loop out of our main function
         self.setBothMotorsToSameVelocity(0.5)
         sleep(5)
         self.stop()
@@ -110,6 +115,7 @@ class dr20:
         # TODO: Add a return home function here!
 
     def readVisionSensor(self):
+        print(f"Robot {str(self.ID)} reading vision sensor")
         print("reading vision sensor")
         print(f"Sensor Handle: {self.visionSensor}")
         print(f"Sensor Resolution: {self.visionSensorResolution}")
