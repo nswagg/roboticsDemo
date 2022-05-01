@@ -27,9 +27,9 @@ class subroutine:
 
     def connectObject(self):
         # Creates a thread for a single robot.
-        robot = dr20(self.sim, self.name, self.ID) # Initializes a new Robot object
+        self.robot = dr20(self.sim, self.name, self.ID) # Initializes a new Robot object
         # Setting Robot in motion with automated script
-        self.rThread = threading.Thread(target=robot.randomlyExploreForSetTime)
+        self.rThread = threading.Thread(target=self.robot.randomlyExploreForSetTime)
         self.threads.append(self.rThread)
         self.rThread.start()
         sleep(.1)
